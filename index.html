@@ -27,7 +27,8 @@
             <a href="#" onclick="changePage('dashboard')" id="nav-dashboard" class="nav-item block py-2.5 px-4 rounded transition duration-200 bg-blue-600 hover:bg-blue-700">
                 <i class="fas fa-chart-line mr-2 w-5 text-center"></i> Dashboard ภาพรวม
             </a>
-            <div class="text-xs text-gray-400 uppercase tracking-wider mt-6 mb-2 px-4">หมวดหมู่สินค้า</div>
+            
+            <div class="text-xs text-gray-400 uppercase tracking-wider mt-6 mb-2 px-4">หมวดหมู่สินค้า (อิงจาก Google Sheet)</div>
             <a href="#" onclick="changePage('cat1')" id="nav-cat1" class="nav-item flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700">
                 <i class="fas fa-pills mr-2 w-5 text-center text-blue-300"></i> <span id="label-cat1" class="truncate">โภชนาการ</span>
             </a>
@@ -37,8 +38,12 @@
             <a href="#" onclick="changePage('cat3')" id="nav-cat3" class="nav-item flex items-center py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700">
                 <i class="fas fa-running mr-2 w-5 text-center text-green-300"></i> <span id="label-cat3" class="truncate">สินค้า Partner</span>
             </a>
-            <div class="text-xs text-gray-400 uppercase tracking-wider mt-6 mb-2 px-4">ระบบจัดการ</div>
-            <a href="#" onclick="changePage('pos')" id="nav-pos" class="nav-item block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 text-green-400">
+            
+            <div class="text-xs text-gray-400 uppercase tracking-wider mt-6 mb-2 px-4">ระบบร้านค้า</div>
+            <a href="#" onclick="changePage('sales')" id="nav-sales" class="nav-item block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 text-purple-400 font-medium">
+                <i class="fas fa-chart-pie mr-2 w-5 text-center"></i> สรุปข้อมูลยอดขาย
+            </a>
+            <a href="#" onclick="changePage('pos')" id="nav-pos" class="nav-item block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 text-green-400 font-medium">
                 <i class="fas fa-file-upload mr-2 w-5 text-center"></i> อัพโหลดยอดขาย POS
             </a>
         </nav>
@@ -96,10 +101,13 @@
         <div class="modal-container bg-white w-11/12 md:max-w-xl mx-auto rounded-lg shadow-xl z-50 overflow-y-auto transform transition-all">
             <div class="modal-content py-4 text-left px-6">
                 <div class="flex justify-between items-center pb-3 border-b">
-                    <p class="text-xl font-bold text-gray-800"><i class="fas fa-plus-circle text-green-500 mr-2"></i>เพิ่มสินค้าใหม่</p>
+                    <p class="text-xl font-bold text-gray-800"><i class="fas fa-plus-circle text-green-500 mr-2"></i>เพิ่มสินค้าใหม่ (Manual)</p>
                     <div class="modal-close cursor-pointer z-50 p-2" onclick="closeModal('addProductModal')">
                         <i class="fas fa-times text-gray-400 hover:text-red-500"></i>
                     </div>
+                </div>
+                <div class="mb-4 mt-2 p-3 bg-blue-50 border border-blue-100 rounded text-sm text-blue-700">
+                    <i class="fas fa-info-circle mr-1"></i> <b>ทิป:</b> หากมีสินค้าเยอะ แนะนำให้เพิ่มรหัสและข้อมูลใน <a href="#" class="underline font-bold">Google Sheet</a> แทนการเพิ่มทีละชิ้นในหน้านี้
                 </div>
                 <div class="my-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="col-span-1 md:col-span-2">
@@ -125,9 +133,9 @@
                         <input type="number" id="add-item-price" value="0" min="0" class="shadow-sm border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500">
                     </div>
                     <div class="col-span-1 md:col-span-2">
-                        <label class="block text-gray-700 text-sm font-bold mb-2">ลิงก์รูปภาพ (ถ้ามี)</label>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">ลิงก์รูปภาพ URL (ถ้ามี)</label>
                         <input type="text" id="add-item-image" placeholder="https://..." class="shadow-sm border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500">
-                        <p class="text-xs text-gray-400 mt-1">เว้นว่างไว้ระบบจะใส่รูปเริ่มต้นให้</p>
+                        <p class="text-xs text-gray-400 mt-1">วางลิงก์รูปภาพ เว้นว่างไว้ระบบจะสุ่มรูปเริ่มต้นให้</p>
                     </div>
                 </div>
                 <div class="flex justify-end pt-2 border-t mt-4 pt-4">
@@ -165,20 +173,24 @@
     <!-- 4. POS Confirmation Modal -->
     <div id="posModal" class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center z-50">
         <div class="modal-overlay absolute w-full h-full bg-gray-900 opacity-50" onclick="closeModal('posModal')"></div>
-        <div class="modal-container bg-white w-11/12 md:max-w-2xl mx-auto rounded-lg shadow-xl z-50 overflow-y-auto transform transition-all">
+        <div class="modal-container bg-white w-11/12 md:max-w-3xl mx-auto rounded-lg shadow-xl z-50 overflow-y-auto transform transition-all">
             <div class="modal-content py-4 text-left px-6">
                 <div class="flex justify-between items-center pb-3 border-b">
-                    <p class="text-2xl font-bold text-green-600"><i class="fas fa-check-circle mr-2"></i>ยืนยันการตัดสต๊อก</p>
+                    <p class="text-2xl font-bold text-green-600"><i class="fas fa-check-circle mr-2"></i>ยืนยันการตัดสต๊อกและยอดขาย</p>
                     <div class="modal-close cursor-pointer z-50 p-2" onclick="closeModal('posModal')">
                         <i class="fas fa-times text-gray-500 hover:text-red-500"></i>
                     </div>
                 </div>
                 <div class="my-4">
                     <p class="mb-2 text-gray-600">กรุณาตรวจสอบรายการยอดขายที่ระบบวิเคราะห์ได้ ก่อนทำการตัดสต๊อก</p>
-                    <div class="bg-gray-50 p-4 rounded border max-h-64 overflow-y-auto" id="pos-summary-list">
+                    <div class="bg-gray-50 p-4 rounded border max-h-80 overflow-y-auto" id="pos-summary-list">
                         <!-- POS items will be injected here -->
                     </div>
-                    <div id="pos-error-msg" class="text-red-500 text-sm mt-2 hidden bg-red-50 p-3 rounded border border-red-200"></div>
+                    <div class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg flex justify-between items-center">
+                        <span class="font-semibold text-gray-700">ยอดขายรวมจากบิลนี้ (ประมาณการ):</span>
+                        <span id="pos-total-revenue" class="text-xl font-bold text-green-700">฿0.00</span>
+                    </div>
+                    <div id="pos-error-msg" class="text-red-500 text-sm mt-3 hidden bg-red-50 p-3 rounded border border-red-200"></div>
                 </div>
                 <div class="flex justify-end pt-2 border-t mt-4 pt-4">
                     <button onclick="closeModal('posModal')" class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 mr-2 transition">ยกเลิก</button>
@@ -197,32 +209,37 @@
             'cat3': 'สินค้า Partner / Decathlon'
         };
 
+        // โครงสร้างที่ออกแบบมาให้ตรงกับ Google Sheet (Image, ID, Name, Cost, Price, Stock)
         let inventory = [
-            { id: '1-1', cat: 'cat1', name: 'Amino Vital Blue pouch 100 g', cost: 52.5, price: 75, stock: 0, image: 'https://via.placeholder.com/50/3B82F6/ffffff?text=Blue' },
-            { id: '1-2', cat: 'cat1', name: 'Amino Vital Fit 90 g', cost: 31.5, price: 45, stock: 30, image: 'https://via.placeholder.com/50/EF4444/ffffff?text=Fit' },
-            { id: '1-3', cat: 'cat1', name: 'Amino Vital Red shot (รสแอปเปิ้ล) 45 g', cost: 42, price: 60, stock: 114, image: 'https://via.placeholder.com/50/EF4444/ffffff?text=Apple' },
-            { id: '1-4', cat: 'cat1', name: 'Amino Vital Red shot (รสบ๊วย) 45 g', cost: 42, price: 60, stock: 0, image: 'https://via.placeholder.com/50/EF4444/ffffff?text=Plum' },
-            { id: '1-5', cat: 'cat1', name: 'Mileage 25 Boost Hydrogel', cost: 88.78, price: 95, stock: 108, image: 'https://via.placeholder.com/50/1F2937/ffffff?text=Mileage' },
-            { id: '1-6', cat: 'cat1', name: '40 Endure Drink Mix Citrus', cost: 88.78, price: 95, stock: 20, image: 'https://via.placeholder.com/50/F59E0B/ffffff?text=Endure' },
-            { id: '1-7', cat: 'cat1', name: '250 Salt+ Electrolyte Capsule', cost: 233.64, price: 250, stock: 2, image: 'https://via.placeholder.com/50/8B5CF6/ffffff?text=Salt' },
-            { id: '2-1', cat: 'cat2', name: 'กางเกง Deez สีเทา XS', cost: 1350, price: 1850, stock: 1, image: 'https://via.placeholder.com/50/9CA3AF/ffffff?text=Pants' },
-            { id: '2-2', cat: 'cat2', name: 'กางเกง Deez สีครีม S', cost: 1350, price: 1850, stock: 1, image: 'https://via.placeholder.com/50/FDE68A/000000?text=Pants' },
-            { id: '2-3', cat: 'cat2', name: 'กางเกง Deez สีกรม S', cost: 1350, price: 1850, stock: 0, image: 'https://via.placeholder.com/50/1E3A8A/ffffff?text=Pants' },
-            { id: '2-4', cat: 'cat2', name: 'เสื้อ Strong สีดำ L', cost: 1650, price: 2490, stock: 5, image: 'https://via.placeholder.com/50/000000/ffffff?text=Shirt' },
-            { id: '2-5', cat: 'cat2', name: 'เสื้อ Strong สีเทาเข้ม L', cost: 1650, price: 2490, stock: 2, image: 'https://via.placeholder.com/50/4B5563/ffffff?text=Shirt' },
-            { id: '2-6', cat: 'cat2', name: 'กางเกงปั่นจักรยาน', cost: 150, price: 340, stock: 10, image: 'https://via.placeholder.com/50/9CA3AF/ffffff?text=Pants' },
-            { id: '2-7', cat: 'cat2', name: 'ถุงเท้า', cost: 40, price: 90, stock: 25, image: 'https://via.placeholder.com/50/FDE68A/000000?text=Socks' },
-            { id: '2-8', cat: 'cat2', name: 'หมวก', cost: 80, price: 170, stock: 12, image: 'https://via.placeholder.com/50/1E3A8A/ffffff?text=Hat' },
-            { id: '3-1', cat: 'cat3', name: 'MH500 BLACK C3', cost: 200, price: 300, stock: 10, image: 'https://via.placeholder.com/50/000000/ffffff?text=Glasses' },
-            { id: '3-2', cat: 'cat3', name: '1PG 100 LILA SKIRT (4323890)', cost: 250, price: 350, stock: 8, image: 'https://via.placeholder.com/50/8B5CF6/ffffff?text=Skirt' },
-            { id: '3-3', cat: 'cat3', name: '1PG 100 LILA SKIRT (4323888)', cost: 250, price: 350, stock: 2, image: 'https://via.placeholder.com/50/8B5CF6/ffffff?text=Skirt' },
-            { id: '3-4', cat: 'cat3', name: '1PG 100 VEGA SKIRT (4103725)', cost: 150, price: 230, stock: 15, image: 'https://via.placeholder.com/50/EC4899/ffffff?text=Skirt' },
+            // หมวดที่ 1
+            { id: 'C1-001', cat: 'cat1', name: 'Amino Vital Blue pouch 100 g', cost: 52.5, price: 75, stock: 0, image: 'https://via.placeholder.com/50/3B82F6/ffffff?text=Blue' },
+            { id: 'C1-002', cat: 'cat1', name: 'Amino Vital Fit 90 g', cost: 31.5, price: 45, stock: 30, image: 'https://via.placeholder.com/50/EF4444/ffffff?text=Fit' },
+            { id: 'C1-003', cat: 'cat1', name: 'Amino Vital Red shot (รสแอปเปิ้ล) 45 g', cost: 42, price: 60, stock: 114, image: 'https://via.placeholder.com/50/EF4444/ffffff?text=Apple' },
+            { id: 'C1-004', cat: 'cat1', name: 'Amino Vital Red shot (รสบ๊วย) 45 g', cost: 42, price: 60, stock: 0, image: 'https://via.placeholder.com/50/EF4444/ffffff?text=Plum' },
+            { id: 'C1-005', cat: 'cat1', name: 'Mileage 25 Boost Hydrogel', cost: 88.78, price: 95, stock: 108, image: 'https://via.placeholder.com/50/1F2937/ffffff?text=Mileage' },
+            { id: 'C1-006', cat: 'cat1', name: '40 Endure Drink Mix Citrus', cost: 88.78, price: 95, stock: 20, image: 'https://via.placeholder.com/50/F59E0B/ffffff?text=Endure' },
+            { id: 'C1-007', cat: 'cat1', name: '250 Salt+ Electrolyte Capsule', cost: 233.64, price: 250, stock: 2, image: 'https://via.placeholder.com/50/8B5CF6/ffffff?text=Salt' },
+            // หมวดที่ 2
+            { id: 'C2-001', cat: 'cat2', name: 'กางเกง Deez สีเทา XS', cost: 1350, price: 1850, stock: 1, image: 'https://via.placeholder.com/50/9CA3AF/ffffff?text=Pants' },
+            { id: 'C2-002', cat: 'cat2', name: 'กางเกง Deez สีครีม S', cost: 1350, price: 1850, stock: 1, image: 'https://via.placeholder.com/50/FDE68A/000000?text=Pants' },
+            { id: 'C2-003', cat: 'cat2', name: 'กางเกง Deez สีกรม S', cost: 1350, price: 1850, stock: 0, image: 'https://via.placeholder.com/50/1E3A8A/ffffff?text=Pants' },
+            { id: 'C2-004', cat: 'cat2', name: 'เสื้อ Strong สีดำ L', cost: 1650, price: 2490, stock: 5, image: 'https://via.placeholder.com/50/000000/ffffff?text=Shirt' },
+            { id: 'C2-005', cat: 'cat2', name: 'เสื้อ Strong สีเทาเข้ม L', cost: 1650, price: 2490, stock: 2, image: 'https://via.placeholder.com/50/4B5563/ffffff?text=Shirt' },
+            { id: 'C2-006', cat: 'cat2', name: 'กางเกงปั่นจักรยาน', cost: 150, price: 340, stock: 10, image: 'https://via.placeholder.com/50/9CA3AF/ffffff?text=Pants' },
+            { id: 'C2-007', cat: 'cat2', name: 'ถุงเท้า', cost: 40, price: 90, stock: 25, image: 'https://via.placeholder.com/50/FDE68A/000000?text=Socks' },
+            { id: 'C2-008', cat: 'cat2', name: 'หมวก', cost: 80, price: 170, stock: 12, image: 'https://via.placeholder.com/50/1E3A8A/ffffff?text=Hat' },
+            // หมวดที่ 3
+            { id: 'C3-001', cat: 'cat3', name: 'MH500 BLACK C3', cost: 200, price: 300, stock: 10, image: 'https://via.placeholder.com/50/000000/ffffff?text=Glasses' },
+            { id: 'C3-002', cat: 'cat3', name: '1PG 100 LILA SKIRT (4323890)', cost: 250, price: 350, stock: 8, image: 'https://via.placeholder.com/50/8B5CF6/ffffff?text=Skirt' },
+            { id: 'C3-003', cat: 'cat3', name: '1PG 100 LILA SKIRT (4323888)', cost: 250, price: 350, stock: 2, image: 'https://via.placeholder.com/50/8B5CF6/ffffff?text=Skirt' },
+            { id: 'C3-004', cat: 'cat3', name: '1PG 100 VEGA SKIRT (4103725)', cost: 150, price: 230, stock: 15, image: 'https://via.placeholder.com/50/EC4899/ffffff?text=Skirt' },
         ];
 
-        let weeklySales = [
-            { id: '1-3', qty: 28 }, { id: '1-5', qty: 15 }, { id: '1-2', qty: 10 },
-            { id: '2-4', qty: 5 }, { id: '2-1', qty: 2 }, { id: '2-5', qty: 1 },
-            { id: '3-4', qty: 12 }, { id: '3-1', qty: 8 }, { id: '3-2', qty: 4 }
+        // เก็บข้อมูลยอดขาย
+        let salesData = [
+            { id: 'C1-003', qty: 28 }, { id: 'C1-005', qty: 15 }, { id: 'C1-002', qty: 10 },
+            { id: 'C2-004', qty: 5 }, { id: 'C2-001', qty: 2 }, { id: 'C2-005', qty: 1 },
+            { id: 'C3-004', qty: 12 }, { id: 'C3-001', qty: 8 }, { id: 'C3-002', qty: 4 }
         ];
 
         let pendingPOSData = [];
@@ -240,9 +257,11 @@
             currentActivePage = page;
             
             document.querySelectorAll('.nav-item').forEach(el => {
-                el.classList.remove('bg-blue-600', 'text-white');
-                if(!el.classList.contains('text-green-400')) el.classList.remove('text-green-400');
-                if(!el.id.includes('pos')) el.classList.add('hover:bg-gray-700'); 
+                el.classList.remove('bg-blue-600', 'text-white', 'bg-purple-600', 'bg-gray-800');
+                if(!el.classList.contains('text-green-400') && !el.classList.contains('text-purple-400')) {
+                    el.classList.remove('text-green-400', 'text-purple-400');
+                }
+                el.classList.add('hover:bg-gray-700'); 
             });
             
             let navId = `nav-${page}`;
@@ -250,6 +269,9 @@
                 if(page === 'pos') {
                     document.getElementById(navId).classList.add('bg-gray-800', 'text-green-400');
                     document.getElementById(navId).classList.remove('hover:bg-gray-700');
+                } else if(page === 'sales') {
+                    document.getElementById(navId).classList.add('bg-purple-600', 'text-white');
+                    document.getElementById(navId).classList.remove('hover:bg-gray-700', 'text-purple-400');
                 } else {
                     document.getElementById(navId).classList.add('bg-blue-600', 'text-white');
                     document.getElementById(navId).classList.remove('hover:bg-gray-700');
@@ -268,6 +290,9 @@
             } else if (page === 'pos') {
                 pageTitle.innerText = "อัพโหลดไฟล์ยอดขายจากระบบ POS";
                 renderPOSUpload(contentArea);
+            } else if (page === 'sales') {
+                pageTitle.innerText = "สรุปข้อมูลยอดขายและรายได้ (Sales Summary)";
+                renderSalesSummary(contentArea);
             }
         }
 
@@ -298,7 +323,7 @@
                     </div>
                 </div>
 
-                <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center"><i class="fas fa-trophy text-yellow-500 mr-2 text-xl"></i> สินค้าขายดีประจำสัปดาห์</h3>
+                <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center"><i class="fas fa-trophy text-yellow-500 mr-2 text-xl"></i> สินค้าขายดีประจำสัปดาห์ (จำนวนชิ้น)</h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                     ${renderTopSellerCard(categories['cat1'], 'cat1', 'border-blue-400')}
                     ${renderTopSellerCard(categories['cat2'], 'cat2', 'border-orange-400')}
@@ -343,7 +368,7 @@
 
         function renderTopSellerCard(title, cat, borderClass) {
             let catItems = inventory.filter(i => i.cat === cat);
-            let salesInCat = weeklySales.filter(ws => catItems.some(ci => ci.id === ws.id))
+            let salesInCat = salesData.filter(ws => catItems.some(ci => ci.id === ws.id))
                                         .sort((a,b) => b.qty - a.qty)
                                         .slice(0, 3);
             
@@ -364,7 +389,7 @@
                 <div class="bg-white rounded-xl shadow-sm p-5 border-t-4 ${borderClass}">
                     <h4 class="font-bold text-gray-700 mb-3 pb-2 border-b border-gray-100 truncate" title="${title}">${title}</h4>
                     <div class="flex flex-col">
-                        ${listHtml || '<p class="text-sm text-gray-400 text-center py-4">ยังไม่มียอดขายสัปดาห์นี้</p>'}
+                        ${listHtml || '<p class="text-sm text-gray-400 text-center py-4">ยังไม่มียอดขาย</p>'}
                     </div>
                 </div>
             `;
@@ -382,7 +407,7 @@
                         </button>
                     </div>
                     <button onclick="openAddModal('${categoryId}')" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-5 rounded-lg shadow-sm transition flex items-center">
-                        <i class="fas fa-plus-circle mr-2"></i> เพิ่มสินค้าใหม่
+                        <i class="fas fa-plus-circle mr-2"></i> เพิ่มสินค้า (แมนนวล)
                     </button>
                 </div>
 
@@ -390,7 +415,7 @@
                     <table class="min-w-full leading-normal">
                         <thead>
                             <tr>
-                                <th class="px-5 py-4 border-b-2 border-gray-200 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">รหัส / รูป / ชื่อสินค้า</th>
+                                <th class="px-5 py-4 border-b-2 border-gray-200 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">รหัส (ID) / รูป / ชื่อสินค้า</th>
                                 <th class="px-5 py-4 border-b-2 border-gray-200 bg-gray-50 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">ต้นทุน</th>
                                 <th class="px-5 py-4 border-b-2 border-gray-200 bg-gray-50 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">ราคาขาย</th>
                                 <th class="px-5 py-4 border-b-2 border-gray-200 bg-gray-50 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">คงเหลือ</th>
@@ -413,7 +438,7 @@
                                             </div>
                                             <div class="ml-4">
                                                 <p class="text-gray-900 font-semibold mb-0.5">${item.name}</p>
-                                                <p class="text-xs text-gray-400 font-mono">ID: ${item.id}</p>
+                                                <p class="text-xs font-mono bg-gray-200 text-gray-600 px-2 py-0.5 rounded inline-block">${item.id}</p>
                                             </div>
                                         </div>
                                     </td>
@@ -433,9 +458,116 @@
                                     </td>
                                 </tr>
                                 `;
-                            }).join('') : '<tr><td colspan="5" class="px-5 py-10 text-center text-gray-400">ยังไม่มีสินค้าในหมวดหมู่นี้ กดปุ่ม "เพิ่มสินค้าใหม่" ด้านบนได้เลย</td></tr>'}
+                            }).join('') : '<tr><td colspan="5" class="px-5 py-10 text-center text-gray-400">ยังไม่มีสินค้าในหมวดหมู่นี้<br>เพิ่มผ่าน Google Sheet (ดึงอัตโนมัติ) หรือกดปุ่ม "เพิ่มสินค้า" ด้านบนได้เลย</td></tr>'}
                         </tbody>
                     </table>
+                </div>
+            `;
+            container.innerHTML = html;
+        }
+
+        // หน้าสรุปข้อมูลยอดขาย (Sales Summary)
+        function renderSalesSummary(container) {
+            let totalRevenue = 0;
+            let totalCost = 0;
+            let totalItemsSold = 0;
+
+            // คำนวณข้อมูลสรุปและเตรียมแสดงผล
+            let salesDetails = salesData.map(sale => {
+                let item = inventory.find(i => i.id === sale.id);
+                if(item) {
+                    let revenue = item.price * sale.qty;
+                    let cost = item.cost * sale.qty;
+                    let profit = revenue - cost;
+                    
+                    totalRevenue += revenue;
+                    totalCost += cost;
+                    totalItemsSold += sale.qty;
+
+                    return { ...sale, item, revenue, cost, profit };
+                }
+                return null;
+            }).filter(s => s !== null).sort((a,b) => b.revenue - a.revenue); // เรียงตามยอดเงินขายได้มากสุด
+
+            let totalProfit = totalRevenue - totalCost;
+
+            let html = `
+                <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-800">สรุปภาพรวมยอดขายร้าน</h2>
+                        <p class="text-gray-500 text-sm mt-1">อัพเดทข้อมูลอัตโนมัติจากการตัดสต๊อก POS</p>
+                    </div>
+                    <button onclick="window.print()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded-lg transition shadow-sm flex items-center text-sm font-medium">
+                        <i class="fas fa-print mr-2"></i> พิมพ์รายงาน
+                    </button>
+                </div>
+
+                <!-- การ์ดสรุปยอดเงิน -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-xl shadow-md p-6 text-white">
+                        <p class="text-green-100 font-medium uppercase tracking-wide text-sm mb-1">ยอดขายรวม (รายรับ)</p>
+                        <h3 class="text-4xl font-bold">฿${totalRevenue.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</h3>
+                        <p class="text-green-100 text-sm mt-3"><i class="fas fa-boxes mr-1"></i> ขายได้ทั้งหมด ${totalItemsSold} ชิ้น</p>
+                    </div>
+                    <div class="bg-gradient-to-br from-red-400 to-red-500 rounded-xl shadow-md p-6 text-white">
+                        <p class="text-red-100 font-medium uppercase tracking-wide text-sm mb-1">ต้นทุนสินค้ารวม</p>
+                        <h3 class="text-4xl font-bold">฿${totalCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</h3>
+                        <p class="text-red-100 text-sm mt-3"><i class="fas fa-calculator mr-1"></i> คำนวณจากต้นทุนต่อชิ้น</p>
+                    </div>
+                    <div class="bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl shadow-md p-6 text-white">
+                        <p class="text-purple-100 font-medium uppercase tracking-wide text-sm mb-1">กำไรสุทธิ (ประเมิน)</p>
+                        <h3 class="text-4xl font-bold">฿${totalProfit.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</h3>
+                        <p class="text-purple-100 text-sm mt-3"><i class="fas fa-chart-line mr-1"></i> อัตรากำไร: ${totalRevenue > 0 ? ((totalProfit/totalRevenue)*100).toFixed(1) : 0}%</p>
+                    </div>
+                </div>
+
+                <!-- ตารางรายละเอียดการขาย -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+                        <h4 class="font-bold text-gray-700">รายละเอียดสินค้าที่ขายได้ (เรียงตามยอดเงิน)</h4>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full leading-normal">
+                            <thead>
+                                <tr>
+                                    <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">สินค้า</th>
+                                    <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">หมวดหมู่</th>
+                                    <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-50 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">จำนวนชิ้น</th>
+                                    <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-50 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">รายรับ (ยอดขาย)</th>
+                                    <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-50 text-right text-xs font-semibold text-purple-600 uppercase tracking-wider">กำไร</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${salesDetails.length > 0 ? salesDetails.map(sale => `
+                                    <tr class="hover:bg-gray-50 transition">
+                                        <td class="px-5 py-3 border-b border-gray-100 text-sm">
+                                            <div class="flex items-center">
+                                                <div class="flex-shrink-0 w-10 h-10 shadow-sm rounded border border-gray-200 overflow-hidden">
+                                                    <img class="w-full h-full object-cover" src="${sale.item.image}" alt="" />
+                                                </div>
+                                                <div class="ml-3">
+                                                    <p class="text-gray-900 font-medium">${sale.item.name}</p>
+                                                    <p class="text-xs text-gray-400">${sale.item.id}</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-5 py-3 border-b border-gray-100 text-sm text-gray-500">
+                                            ${categories[sale.item.cat]}
+                                        </td>
+                                        <td class="px-5 py-3 border-b border-gray-100 text-sm text-center font-bold text-blue-600">
+                                            ${sale.qty}
+                                        </td>
+                                        <td class="px-5 py-3 border-b border-gray-100 text-sm text-right font-medium text-green-700">
+                                            ฿${sale.revenue.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+                                        </td>
+                                        <td class="px-5 py-3 border-b border-gray-100 text-sm text-right font-bold text-purple-600">
+                                            ฿${sale.profit.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+                                        </td>
+                                    </tr>
+                                `).join('') : '<tr><td colspan="5" class="px-5 py-10 text-center text-gray-400">ยังไม่มีข้อมูลการขายในระบบ</td></tr>'}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             `;
             container.innerHTML = html;
@@ -472,7 +604,7 @@
 
                         <div class="flex flex-col">
                             <label class="block text-gray-700 font-semibold mb-2">หรือกรอกข้อมูลเอง (Manual)</label>
-                            <textarea id="pos-data-input" rows="6" class="flex-1 w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm bg-gray-50" placeholder="รูปแบบ:\nชื่อสินค้า, จำนวน\n\nตัวอย่าง:\nกางเกงปั่นจักรยาน, 1\nถุงเท้า, 2"></textarea>
+                            <textarea id="pos-data-input" rows="6" class="flex-1 w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm bg-gray-50" placeholder="รูปแบบ:\nชื่อสินค้า, จำนวน\nหรือ\nรหัส ID, จำนวน\n\nตัวอย่าง:\nC2-006, 1\nถุงเท้า, 2"></textarea>
                             <button onclick="processManualPOSData()" class="mt-4 bg-gray-800 hover:bg-black text-white font-bold py-3 px-4 rounded-xl shadow-md transition flex items-center justify-center">
                                 <i class="fas fa-keyboard mr-2"></i> วิเคราะห์จากข้อความด้านบน
                             </button>
@@ -555,7 +687,7 @@
                 image = `https://via.placeholder.com/50/${randomColor}/ffffff?text=New`;
             }
 
-            const newId = 'new-' + Date.now().toString().slice(-6);
+            const newId = 'M-' + Date.now().toString().slice(-6);
             const newItem = {
                 id: newId, cat: cat, name: name, cost: isNaN(cost) ? 0 : cost,
                 price: price, stock: stock, image: image
@@ -613,7 +745,6 @@
                     const apiKey = ""; 
                     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
                     
-                    // ปรับประโยคคำสั่งให้สั้นลง และไม่มีสัญลักษณ์พิเศษที่ทำให้ระบบเกิดข้อผิดพลาด
                     const promptText = "วิเคราะห์ข้อมูลยอดขายจากรูปภาพใบเสร็จนี้ ให้ดึงเฉพาะ 'ชื่อสินค้า' (name) และ 'จำนวน' (qty) ที่ขายได้ออกมา ส่งกลับมาเป็น JSON Array ของ Object เท่านั้น ห้ามตอบกลับเป็นข้อความอื่นและห้ามใช้รูปแบบ Markdown ตัวอย่าง: [{\"name\": \"กางเกงปั่นจักรยาน\", \"qty\": 1}]";
 
                     const payload = {
@@ -696,6 +827,7 @@
         function matchAndShowPOS(extractedItems) {
             pendingPOSData = [];
             let errorItems = [];
+            let currentBillTotal = 0; // ยอดรวมบิลปัจจุบัน
 
             extractedItems.forEach(data => {
                 let searchName = data.name.toLowerCase();
@@ -715,6 +847,7 @@
                     pendingPOSData.push({
                         item: matchedItem, deductQty: qty, originalName: data.name 
                     });
+                    currentBillTotal += (matchedItem.price * qty); // คำนวณยอดเงินรวม
                 } else {
                     errorItems.push(`${data.name} (x${qty})`);
                 }
@@ -722,7 +855,10 @@
 
             const summaryContainer = document.getElementById('pos-summary-list');
             const errorContainer = document.getElementById('pos-error-msg');
+            const revenueDisplay = document.getElementById('pos-total-revenue');
             
+            revenueDisplay.innerText = `฿${currentBillTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+
             if(pendingPOSData.length === 0) {
                 summaryContainer.innerHTML = '<div class="text-center py-6 text-red-500"><p>ไม่พบรายการสินค้าที่ตรงกับระบบเลย</p></div>';
                 errorContainer.classList.add('hidden');
@@ -730,21 +866,23 @@
                 return;
             }
 
-            let summaryHtml = '<table class="w-full text-sm text-left"><thead class="border-b bg-gray-100"><tr><th class="py-2 px-3">สินค้า (ระบบสต๊อก)</th><th class="py-2 px-2 text-center">เดิม</th><th class="py-2 px-2 text-center text-red-600">หักออก</th><th class="py-2 px-2 text-center text-green-700">เหลือ</th></tr></thead><tbody>';
+            let summaryHtml = '<table class="w-full text-sm text-left"><thead class="border-b bg-gray-100"><tr><th class="py-2 px-3">สินค้า (ระบบสต๊อก)</th><th class="py-2 px-2 text-center">เดิม</th><th class="py-2 px-2 text-center text-red-600">หักออก</th><th class="py-2 px-2 text-center text-green-700">เหลือ</th><th class="py-2 px-2 text-right">ยอดเงิน</th></tr></thead><tbody>';
             
             pendingPOSData.forEach(data => {
                 let newStock = data.item.stock - data.deductQty;
                 let warningClass = newStock < 0 ? "text-red-600 font-bold bg-red-50" : "font-medium text-gray-800";
+                let rowRevenue = data.item.price * data.deductQty;
                 
                 summaryHtml += `
                     <tr class="border-b border-gray-100 last:border-0 hover:bg-white">
                         <td class="py-3 px-3">
-                            <p class="truncate w-48 md:w-auto font-bold text-blue-700" title="${data.item.name}">${data.item.name}</p>
+                            <p class="truncate w-40 md:w-auto font-bold text-blue-700" title="${data.item.name}">${data.item.name}</p>
                             <p class="text-xs text-gray-500 mt-0.5">จากใบเสร็จ: ${data.originalName}</p>
                         </td>
                         <td class="py-3 px-2 text-center text-gray-500">${data.item.stock}</td>
                         <td class="py-3 px-2 text-center text-red-500 font-bold text-lg">-${data.deductQty}</td>
                         <td class="py-3 px-2 text-center ${warningClass} rounded text-lg">${newStock}</td>
+                        <td class="py-3 px-2 text-right font-medium text-green-700">฿${rowRevenue.toLocaleString()}</td>
                     </tr>
                 `;
             });
@@ -767,16 +905,18 @@
             if(pendingPOSData.length === 0) return;
 
             pendingPOSData.forEach(data => {
+                // อัพเดทสต๊อก
                 const itemIndex = inventory.findIndex(i => i.id === data.item.id);
                 if(itemIndex > -1) {
                     let newStock = inventory[itemIndex].stock - data.deductQty;
                     inventory[itemIndex].stock = newStock < 0 ? 0 : newStock;
                     
-                    let wsIndex = weeklySales.findIndex(ws => ws.id === data.item.id);
+                    // อัพเดทยอดขายลงในระบบบันทึก
+                    let wsIndex = salesData.findIndex(ws => ws.id === data.item.id);
                     if(wsIndex > -1) {
-                        weeklySales[wsIndex].qty += data.deductQty;
+                        salesData[wsIndex].qty += data.deductQty;
                     } else {
-                        weeklySales.push({id: data.item.id, qty: data.deductQty});
+                        salesData.push({id: data.item.id, qty: data.deductQty});
                     }
                 }
             });
@@ -784,11 +924,12 @@
             closeModal('posModal');
             document.getElementById('pos-data-input').value = ''; 
             
-            changePage('dashboard');
+            // นำไปหน้าสรุปยอดขายทันทีหลังตัดสต๊อกเสร็จ
+            changePage('sales');
             
             const toast = document.createElement('div');
             toast.className = 'fixed bottom-5 right-5 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-500 flex items-center z-50';
-            toast.innerHTML = '<i class="fas fa-check-circle mr-2 text-xl"></i> ตัดสต๊อกสำเร็จแล้ว!';
+            toast.innerHTML = '<i class="fas fa-check-circle mr-2 text-xl"></i> ตัดสต๊อกและบันทึกยอดขายเรียบร้อย!';
             document.body.appendChild(toast);
             
             setTimeout(() => {
