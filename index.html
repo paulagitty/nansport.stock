@@ -48,7 +48,7 @@
             </a>
         </nav>
         <div class="p-4 text-xs text-gray-500 text-center border-t border-gray-800">
-            อัพเดทล่าสุด: วันนี้
+            อัพเดทล่าสุด: ตอนนี้ (Real-time)
         </div>
     </aside>
 
@@ -57,8 +57,13 @@
         <!-- Header -->
         <header class="bg-white shadow px-6 py-4 flex justify-between items-center z-10">
             <h2 id="page-title" class="text-xl font-semibold text-gray-800">Dashboard</h2>
-            <div class="flex items-center text-sm text-gray-600 bg-gray-100 py-1 px-3 rounded-full border">
-                <i class="fas fa-user-circle text-xl mr-2 text-pink-500"></i> พนักงานขาย (สาวน่านสปอร์ต)
+            <div class="flex items-center gap-3">
+                <button onclick="fetchInventoryData()" class="bg-blue-50 text-blue-600 hover:bg-blue-100 px-3 py-1.5 rounded-md text-sm font-medium transition flex items-center border border-blue-200">
+                    <i class="fas fa-sync-alt mr-1"></i> ซิงค์ข้อมูลล่าสุด
+                </button>
+                <div class="flex items-center text-sm text-gray-600 bg-gray-100 py-1 px-3 rounded-full border">
+                    <i class="fas fa-user-circle text-xl mr-2 text-pink-500"></i> พนักงานขาย
+                </div>
             </div>
         </header>
 
@@ -83,7 +88,7 @@
                 </div>
                 <div class="my-5">
                     <p id="edit-item-name" class="text-gray-700 mb-4 font-semibold bg-gray-100 p-2 rounded"></p>
-                    <label class="block text-gray-700 text-sm font-bold mb-2">จำนวนคงเหลือในสต๊อก (อัพเดทใหม่):</label>
+                    <label class="block text-gray-700 text-sm font-bold mb-2">จำนวนคงเหลือในสต๊อก (อัพเดทใหม่ลง Google Sheet):</label>
                     <input type="number" id="edit-item-stock" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                     <input type="hidden" id="edit-item-id">
                 </div>
@@ -95,99 +100,23 @@
         </div>
     </div>
 
-    <!-- 2. Add New Product Modal -->
-    <div id="addProductModal" class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center z-50">
-        <div class="modal-overlay absolute w-full h-full bg-gray-900 opacity-50" onclick="closeModal('addProductModal')"></div>
-        <div class="modal-container bg-white w-11/12 md:max-w-xl mx-auto rounded-lg shadow-xl z-50 overflow-y-auto transform transition-all">
-            <div class="modal-content py-4 text-left px-6">
-                <div class="flex justify-between items-center pb-3 border-b">
-                    <p class="text-xl font-bold text-gray-800"><i class="fas fa-plus-circle text-green-500 mr-2"></i>เพิ่มสินค้าใหม่ (Manual)</p>
-                    <div class="modal-close cursor-pointer z-50 p-2" onclick="closeModal('addProductModal')">
-                        <i class="fas fa-times text-gray-400 hover:text-red-500"></i>
-                    </div>
-                </div>
-                <div class="mb-4 mt-2 p-3 bg-blue-50 border border-blue-100 rounded text-sm text-blue-700">
-                    <i class="fas fa-info-circle mr-1"></i> <b>ทิป:</b> หากมีสินค้าเยอะ แนะนำให้เพิ่มรหัสและข้อมูลใน <a href="#" class="underline font-bold">Google Sheet</a> แทนการเพิ่มทีละชิ้นในหน้านี้
-                </div>
-                <div class="my-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="col-span-1 md:col-span-2">
-                        <label class="block text-gray-700 text-sm font-bold mb-2">ชื่อสินค้า <span class="text-red-500">*</span></label>
-                        <input type="text" id="add-item-name" placeholder="เช่น กางเกงปั่นจักรยานสีดำ M" class="shadow-sm border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500">
-                    </div>
-                    <div>
-                        <label class="block text-gray-700 text-sm font-bold mb-2">หมวดหมู่</label>
-                        <select id="add-item-cat" class="shadow-sm border rounded w-full py-2 px-3 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-green-500">
-                            <!-- Options will be populated dynamically -->
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-gray-700 text-sm font-bold mb-2">สต๊อกเริ่มต้น <span class="text-red-500">*</span></label>
-                        <input type="number" id="add-item-stock" value="0" min="0" class="shadow-sm border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500">
-                    </div>
-                    <div>
-                        <label class="block text-gray-700 text-sm font-bold mb-2">ราคาต้นทุน (บาท)</label>
-                        <input type="number" id="add-item-cost" value="0" min="0" class="shadow-sm border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500">
-                    </div>
-                    <div>
-                        <label class="block text-gray-700 text-sm font-bold mb-2">ราคาขาย (บาท) <span class="text-red-500">*</span></label>
-                        <input type="number" id="add-item-price" value="0" min="0" class="shadow-sm border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500">
-                    </div>
-                    <div class="col-span-1 md:col-span-2">
-                        <label class="block text-gray-700 text-sm font-bold mb-2">ลิงก์รูปภาพ URL (ถ้ามี)</label>
-                        <input type="text" id="add-item-image" placeholder="https://..." class="shadow-sm border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500">
-                        <p class="text-xs text-gray-400 mt-1">วางลิงก์รูปภาพ เว้นว่างไว้ระบบจะสุ่มรูปเริ่มต้นให้</p>
-                    </div>
-                </div>
-                <div class="flex justify-end pt-2 border-t mt-4 pt-4">
-                    <button onclick="closeModal('addProductModal')" class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 mr-2 transition">ยกเลิก</button>
-                    <button onclick="saveNewProduct()" class="px-4 py-2 bg-green-600 rounded-lg text-white hover:bg-green-700 transition shadow"><i class="fas fa-save mr-2"></i>บันทึกสินค้าใหม่</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 3. Edit Category Name Modal -->
-    <div id="editCatModal" class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center z-50">
-        <div class="modal-overlay absolute w-full h-full bg-gray-900 opacity-50" onclick="closeModal('editCatModal')"></div>
-        <div class="modal-container bg-white w-11/12 md:max-w-sm mx-auto rounded-lg shadow-xl z-50 overflow-y-auto transform transition-all">
-            <div class="modal-content py-4 text-left px-6">
-                <div class="flex justify-between items-center pb-3 border-b">
-                    <p class="text-xl font-bold text-gray-800">เปลี่ยนชื่อหมวดหมู่</p>
-                    <div class="modal-close cursor-pointer z-50 p-2" onclick="closeModal('editCatModal')">
-                        <i class="fas fa-times text-gray-400 hover:text-red-500"></i>
-                    </div>
-                </div>
-                <div class="my-5">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">ชื่อหมวดหมู่ใหม่:</label>
-                    <input type="text" id="edit-cat-name-input" class="shadow-sm border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-500">
-                    <input type="hidden" id="edit-cat-id-input">
-                </div>
-                <div class="flex justify-end pt-2 border-t mt-4 pt-4">
-                    <button onclick="closeModal('editCatModal')" class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 mr-2 transition">ยกเลิก</button>
-                    <button onclick="saveCategoryName()" class="px-4 py-2 bg-orange-500 rounded-lg text-white hover:bg-orange-600 transition shadow">บันทึก</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- 4. POS Confirmation Modal -->
     <div id="posModal" class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center z-50">
         <div class="modal-overlay absolute w-full h-full bg-gray-900 opacity-50" onclick="closeModal('posModal')"></div>
         <div class="modal-container bg-white w-11/12 md:max-w-3xl mx-auto rounded-lg shadow-xl z-50 overflow-y-auto transform transition-all">
             <div class="modal-content py-4 text-left px-6">
                 <div class="flex justify-between items-center pb-3 border-b">
-                    <p class="text-2xl font-bold text-green-600"><i class="fas fa-check-circle mr-2"></i>ยืนยันการตัดสต๊อกและยอดขาย</p>
+                    <p class="text-2xl font-bold text-green-600"><i class="fas fa-check-circle mr-2"></i>ยืนยันการตัดสต๊อกลง Google Sheet</p>
                     <div class="modal-close cursor-pointer z-50 p-2" onclick="closeModal('posModal')">
                         <i class="fas fa-times text-gray-500 hover:text-red-500"></i>
                     </div>
                 </div>
                 <div class="my-4">
-                    <p class="mb-2 text-gray-600">กรุณาตรวจสอบรายการยอดขายที่ระบบวิเคราะห์ได้ ก่อนทำการตัดสต๊อก</p>
+                    <p class="mb-2 text-gray-600">กรุณาตรวจสอบรายการยอดขายที่ระบบวิเคราะห์ได้ ก่อนทำการตัดสต๊อกจริงลงชีท</p>
                     <div class="bg-gray-50 p-4 rounded border max-h-80 overflow-y-auto" id="pos-summary-list">
-                        <!-- POS items will be injected here -->
                     </div>
                     <div class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg flex justify-between items-center">
-                        <span class="font-semibold text-gray-700">ยอดขายรวมจากบิลนี้ (ประมาณการ):</span>
+                        <span class="font-semibold text-gray-700">ยอดขายรวมจากบิลนี้:</span>
                         <span id="pos-total-revenue" class="text-xl font-bold text-green-700">฿0.00</span>
                     </div>
                     <div id="pos-error-msg" class="text-red-500 text-sm mt-3 hidden bg-red-50 p-3 rounded border border-red-200"></div>
@@ -201,52 +130,68 @@
     </div>
 
     <script>
-        // --- 1. DATA STRUCTURES ---
-
+        // ==========================================
+        // 🔴 นำ URL ของ Web App มาวางที่นี่
+        // ==========================================
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz07TCfHuUuyJBgariociqk45iCQ7w4CIiQlsw-kOT33nH1troIKfpKaCPxZSeLvMP_BQ/exec"; 
+        
+        // --- DATA STRUCTURES ---
         let categories = {
-            'cat1': 'โภชนาการ (Amino, Mileage)',
+            'cat1': 'โภชนาการ',
             'cat2': 'เสื้อผ้าปั่นจักรยาน',
-            'cat3': 'สินค้า Partner / Decathlon'
+            'cat3': 'สินค้า Partner'
         };
 
-        // โครงสร้างที่ออกแบบมาให้ตรงกับ Google Sheet (Image, ID, Name, Cost, Price, Stock)
-        let inventory = [
-            // หมวดที่ 1
-            { id: 'C1-001', cat: 'cat1', name: 'Amino Vital Blue pouch 100 g', cost: 52.5, price: 75, stock: 0, image: 'https://via.placeholder.com/50/3B82F6/ffffff?text=Blue' },
-            { id: 'C1-002', cat: 'cat1', name: 'Amino Vital Fit 90 g', cost: 31.5, price: 45, stock: 30, image: 'https://via.placeholder.com/50/EF4444/ffffff?text=Fit' },
-            { id: 'C1-003', cat: 'cat1', name: 'Amino Vital Red shot (รสแอปเปิ้ล) 45 g', cost: 42, price: 60, stock: 114, image: 'https://via.placeholder.com/50/EF4444/ffffff?text=Apple' },
-            { id: 'C1-004', cat: 'cat1', name: 'Amino Vital Red shot (รสบ๊วย) 45 g', cost: 42, price: 60, stock: 0, image: 'https://via.placeholder.com/50/EF4444/ffffff?text=Plum' },
-            { id: 'C1-005', cat: 'cat1', name: 'Mileage 25 Boost Hydrogel', cost: 88.78, price: 95, stock: 108, image: 'https://via.placeholder.com/50/1F2937/ffffff?text=Mileage' },
-            { id: 'C1-006', cat: 'cat1', name: '40 Endure Drink Mix Citrus', cost: 88.78, price: 95, stock: 20, image: 'https://via.placeholder.com/50/F59E0B/ffffff?text=Endure' },
-            { id: 'C1-007', cat: 'cat1', name: '250 Salt+ Electrolyte Capsule', cost: 233.64, price: 250, stock: 2, image: 'https://via.placeholder.com/50/8B5CF6/ffffff?text=Salt' },
-            // หมวดที่ 2
-            { id: 'C2-001', cat: 'cat2', name: 'กางเกง Deez สีเทา XS', cost: 1350, price: 1850, stock: 1, image: 'https://via.placeholder.com/50/9CA3AF/ffffff?text=Pants' },
-            { id: 'C2-002', cat: 'cat2', name: 'กางเกง Deez สีครีม S', cost: 1350, price: 1850, stock: 1, image: 'https://via.placeholder.com/50/FDE68A/000000?text=Pants' },
-            { id: 'C2-003', cat: 'cat2', name: 'กางเกง Deez สีกรม S', cost: 1350, price: 1850, stock: 0, image: 'https://via.placeholder.com/50/1E3A8A/ffffff?text=Pants' },
-            { id: 'C2-004', cat: 'cat2', name: 'เสื้อ Strong สีดำ L', cost: 1650, price: 2490, stock: 5, image: 'https://via.placeholder.com/50/000000/ffffff?text=Shirt' },
-            { id: 'C2-005', cat: 'cat2', name: 'เสื้อ Strong สีเทาเข้ม L', cost: 1650, price: 2490, stock: 2, image: 'https://via.placeholder.com/50/4B5563/ffffff?text=Shirt' },
-            { id: 'C2-006', cat: 'cat2', name: 'กางเกงปั่นจักรยาน', cost: 150, price: 340, stock: 10, image: 'https://via.placeholder.com/50/9CA3AF/ffffff?text=Pants' },
-            { id: 'C2-007', cat: 'cat2', name: 'ถุงเท้า', cost: 40, price: 90, stock: 25, image: 'https://via.placeholder.com/50/FDE68A/000000?text=Socks' },
-            { id: 'C2-008', cat: 'cat2', name: 'หมวก', cost: 80, price: 170, stock: 12, image: 'https://via.placeholder.com/50/1E3A8A/ffffff?text=Hat' },
-            // หมวดที่ 3
-            { id: 'C3-001', cat: 'cat3', name: 'MH500 BLACK C3', cost: 200, price: 300, stock: 10, image: 'https://via.placeholder.com/50/000000/ffffff?text=Glasses' },
-            { id: 'C3-002', cat: 'cat3', name: '1PG 100 LILA SKIRT (4323890)', cost: 250, price: 350, stock: 8, image: 'https://via.placeholder.com/50/8B5CF6/ffffff?text=Skirt' },
-            { id: 'C3-003', cat: 'cat3', name: '1PG 100 LILA SKIRT (4323888)', cost: 250, price: 350, stock: 2, image: 'https://via.placeholder.com/50/8B5CF6/ffffff?text=Skirt' },
-            { id: 'C3-004', cat: 'cat3', name: '1PG 100 VEGA SKIRT (4103725)', cost: 150, price: 230, stock: 15, image: 'https://via.placeholder.com/50/EC4899/ffffff?text=Skirt' },
-        ];
-
-        // เก็บข้อมูลยอดขาย
-        let salesData = [
-            { id: 'C1-003', qty: 28 }, { id: 'C1-005', qty: 15 }, { id: 'C1-002', qty: 10 },
-            { id: 'C2-004', qty: 5 }, { id: 'C2-001', qty: 2 }, { id: 'C2-005', qty: 1 },
-            { id: 'C3-004', qty: 12 }, { id: 'C3-001', qty: 8 }, { id: 'C3-002', qty: 4 }
-        ];
-
+        // จะถูกโหลดมาจาก Google Sheet
+        let inventory = [];
+        let salesData = [];
         let pendingPOSData = [];
         let currentActivePage = 'dashboard';
 
-        // --- 2. CORE & NAVIGATION ---
+        // --- FETCH DATA FROM GOOGLE SHEET ---
+        async function fetchInventoryData() {
+            const contentArea = document.getElementById('content-area');
+            
+            if(!SCRIPT_URL || SCRIPT_URL === "YOUR_WEB_APP_URL_HERE") {
+                contentArea.innerHTML = `
+                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-6 rounded-md shadow-sm">
+                        <h3 class="text-lg font-bold text-yellow-800 mb-2"><i class="fas fa-exclamation-triangle mr-2"></i>ยังไม่ได้เชื่อมต่อ Google Sheet</h3>
+                        <p class="text-yellow-700">กรุณานำ URL ที่ได้จากการ Publish (Deploy) ของ Google Apps Script มาวางในตัวแปร <b>SCRIPT_URL</b> ภายในไฟล์ index.html</p>
+                    </div>`;
+                return;
+            }
 
+            contentArea.innerHTML = `
+                <div class="flex flex-col items-center justify-center h-full pt-20">
+                    <i class="fas fa-sync-alt fa-spin text-5xl text-blue-500 mb-4"></i>
+                    <h2 class="text-xl text-gray-700 font-semibold">กำลังซิงค์ข้อมูลจาก Google Sheet...</h2>
+                    <p class="text-gray-400 text-sm mt-2">โปรดรอสักครู่</p>
+                </div>`;
+
+            try {
+                const response = await fetch(SCRIPT_URL);
+                const data = await response.json();
+                
+                inventory = data.inventory || [];
+                salesData = data.salesData || [];
+                
+                // โหลดเสร็จแล้ว ให้แสดงหน้าปัจจุบันใหม่
+                changePage(currentActivePage);
+                
+                // โชว์แจ้งเตือน
+                showToast('<i class="fas fa-check-circle mr-2"></i> ซิงค์ข้อมูลล่าสุดสำเร็จ', 'bg-green-600');
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                contentArea.innerHTML = `
+                    <div class="text-center text-red-500 mt-20">
+                        <i class="fas fa-exclamation-triangle text-5xl mb-4"></i>
+                        <h2 class="text-xl font-bold">โหลดข้อมูลล้มเหลว</h2>
+                        <p class="mt-2 text-gray-600">ตรวจสอบการตั้งค่า "การทำให้ใช้งานได้ (Deploy)" ใน Google Script<br>ต้องตั้งค่า 'ผู้มีสิทธิ์เข้าถึง' เป็น 'ทุกคน (Anyone)'</p>
+                    </div>`;
+            }
+        }
+
+        // --- CORE & NAVIGATION ---
         function updateSidebarCatNames() {
             document.getElementById('label-cat1').innerText = categories['cat1'];
             document.getElementById('label-cat2').innerText = categories['cat2'];
@@ -282,7 +227,7 @@
             const pageTitle = document.getElementById('page-title');
 
             if (page === 'dashboard') {
-                pageTitle.innerText = "Dashboard ภาพรวมร้าน สาวน่านสปอร์ต";
+                pageTitle.innerText = "Dashboard ภาพรวมร้าน (เชื่อมต่อ Google Sheet)";
                 renderDashboard(contentArea);
             } else if (page.startsWith('cat')) {
                 pageTitle.innerText = `สต๊อกสินค้า: ${categories[page]}`;
@@ -296,9 +241,22 @@
             }
         }
 
-        // --- 3. RENDER FUNCTIONS ---
+        function showToast(htmlMsg, bgClass) {
+            const toast = document.createElement('div');
+            toast.className = `fixed bottom-5 right-5 ${bgClass} text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-500 flex items-center z-50`;
+            toast.innerHTML = htmlMsg;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-10');
+                setTimeout(() => toast.remove(), 500);
+            }, 3000);
+        }
 
+        // --- RENDER FUNCTIONS ---
         function renderDashboard(container) {
+            if (inventory.length === 0) return; // Wait for data to load
+            
             const lowStockItems = inventory.filter(item => item.stock < 3);
             
             let html = `
@@ -317,13 +275,13 @@
                             <i class="fas fa-boxes text-3xl"></i>
                         </div>
                         <div>
-                            <p class="mb-1 text-sm font-semibold text-gray-500 uppercase tracking-wide">สินค้าทั้งหมดในระบบ</p>
+                            <p class="mb-1 text-sm font-semibold text-gray-500 uppercase tracking-wide">สินค้าทั้งหมดในชีท</p>
                             <p class="text-3xl font-bold text-gray-800">${inventory.length} <span class="text-base font-normal text-gray-500">รายการ</span></p>
                         </div>
                     </div>
                 </div>
 
-                <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center"><i class="fas fa-trophy text-yellow-500 mr-2 text-xl"></i> สินค้าขายดีประจำสัปดาห์ (จำนวนชิ้น)</h3>
+                <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center"><i class="fas fa-trophy text-yellow-500 mr-2 text-xl"></i> สินค้าขายดี (อิงจากชีท)</h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                     ${renderTopSellerCard(categories['cat1'], 'cat1', 'border-blue-400')}
                     ${renderTopSellerCard(categories['cat2'], 'cat2', 'border-orange-400')}
@@ -345,7 +303,9 @@
                                 <tr class="hover:bg-gray-50 transition duration-150">
                                     <td class="px-5 py-3 border-b border-gray-100 text-sm">
                                         <div class="flex items-center">
-                                            <div class="flex-shrink-0 w-10 h-10 shadow-sm rounded overflow-hidden"><img class="w-full h-full object-cover" src="${item.image}" alt="" /></div>
+                                            <div class="flex-shrink-0 w-10 h-10 shadow-sm rounded overflow-hidden">
+                                                <img class="w-full h-full object-cover" src="${item.image || 'https://via.placeholder.com/50?text=No+Img'}" onerror="this.src='https://via.placeholder.com/50?text=No+Img'" alt="" />
+                                            </div>
                                             <div class="ml-3"><p class="text-gray-900 font-medium">${item.name}</p></div>
                                         </div>
                                     </td>
@@ -402,13 +362,8 @@
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
                     <div>
                         <h3 class="text-xl font-bold text-gray-800">${categories[categoryId]}</h3>
-                        <button onclick="openEditCatModal('${categoryId}')" class="text-sm text-orange-500 hover:text-orange-700 mt-1 flex items-center transition">
-                            <i class="fas fa-pen text-xs mr-1"></i> เปลี่ยนชื่อหมวดหมู่นี้
-                        </button>
+                        <p class="text-sm text-gray-500">ข้อมูลเชื่อมตรงกับ Google Sheet หากต้องการเพิ่มสินค้าใหม่ กรุณาไปเพิ่มใน Sheet</p>
                     </div>
-                    <button onclick="openAddModal('${categoryId}')" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-5 rounded-lg shadow-sm transition flex items-center">
-                        <i class="fas fa-plus-circle mr-2"></i> เพิ่มสินค้า (แมนนวล)
-                    </button>
                 </div>
 
                 <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
@@ -434,7 +389,7 @@
                                     <td class="px-5 py-4 border-b border-gray-100 text-sm">
                                         <div class="flex items-center">
                                             <div class="flex-shrink-0 w-14 h-14 shadow-sm rounded-md overflow-hidden border border-gray-200">
-                                                <img class="w-full h-full object-cover" src="${item.image}" alt="" />
+                                                <img class="w-full h-full object-cover" src="${item.image || 'https://via.placeholder.com/50?text=No+Img'}" onerror="this.src='https://via.placeholder.com/50?text=No+Img'" alt="" />
                                             </div>
                                             <div class="ml-4">
                                                 <p class="text-gray-900 font-semibold mb-0.5">${item.name}</p>
@@ -453,12 +408,12 @@
                                     </td>
                                     <td class="px-5 py-4 border-b border-gray-100 text-sm text-center">
                                         <button onclick="openEditModal('${item.id}')" class="text-blue-600 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 px-4 py-2 rounded-lg transition border border-blue-100 shadow-sm">
-                                            <i class="fas fa-edit mr-1"></i> แก้ไขสต๊อก
+                                            <i class="fas fa-edit mr-1"></i> ปรับสต๊อก
                                         </button>
                                     </td>
                                 </tr>
                                 `;
-                            }).join('') : '<tr><td colspan="5" class="px-5 py-10 text-center text-gray-400">ยังไม่มีสินค้าในหมวดหมู่นี้<br>เพิ่มผ่าน Google Sheet (ดึงอัตโนมัติ) หรือกดปุ่ม "เพิ่มสินค้า" ด้านบนได้เลย</td></tr>'}
+                            }).join('') : '<tr><td colspan="5" class="px-5 py-10 text-center text-gray-400">ยังไม่มีข้อมูลในหมวดหมู่นี้ หรือกำลังโหลดข้อมูล</td></tr>'}
                         </tbody>
                     </table>
                 </div>
@@ -466,13 +421,11 @@
             container.innerHTML = html;
         }
 
-        // หน้าสรุปข้อมูลยอดขาย (Sales Summary)
         function renderSalesSummary(container) {
             let totalRevenue = 0;
             let totalCost = 0;
             let totalItemsSold = 0;
 
-            // คำนวณข้อมูลสรุปและเตรียมแสดงผล
             let salesDetails = salesData.map(sale => {
                 let item = inventory.find(i => i.id === sale.id);
                 if(item) {
@@ -487,7 +440,7 @@
                     return { ...sale, item, revenue, cost, profit };
                 }
                 return null;
-            }).filter(s => s !== null).sort((a,b) => b.revenue - a.revenue); // เรียงตามยอดเงินขายได้มากสุด
+            }).filter(s => s !== null).sort((a,b) => b.revenue - a.revenue);
 
             let totalProfit = totalRevenue - totalCost;
 
@@ -495,14 +448,10 @@
                 <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
                     <div>
                         <h2 class="text-2xl font-bold text-gray-800">สรุปภาพรวมยอดขายร้าน</h2>
-                        <p class="text-gray-500 text-sm mt-1">อัพเดทข้อมูลอัตโนมัติจากการตัดสต๊อก POS</p>
+                        <p class="text-gray-500 text-sm mt-1">อัพเดทข้อมูลอัตโนมัติจาก Google Sheet (จำนวนที่ขายไป)</p>
                     </div>
-                    <button onclick="window.print()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded-lg transition shadow-sm flex items-center text-sm font-medium">
-                        <i class="fas fa-print mr-2"></i> พิมพ์รายงาน
-                    </button>
                 </div>
 
-                <!-- การ์ดสรุปยอดเงิน -->
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
                     <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-xl shadow-md p-6 text-white">
                         <p class="text-green-100 font-medium uppercase tracking-wide text-sm mb-1">ยอดขายรวม (รายรับ)</p>
@@ -512,7 +461,6 @@
                     <div class="bg-gradient-to-br from-red-400 to-red-500 rounded-xl shadow-md p-6 text-white">
                         <p class="text-red-100 font-medium uppercase tracking-wide text-sm mb-1">ต้นทุนสินค้ารวม</p>
                         <h3 class="text-4xl font-bold">฿${totalCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</h3>
-                        <p class="text-red-100 text-sm mt-3"><i class="fas fa-calculator mr-1"></i> คำนวณจากต้นทุนต่อชิ้น</p>
                     </div>
                     <div class="bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl shadow-md p-6 text-white">
                         <p class="text-purple-100 font-medium uppercase tracking-wide text-sm mb-1">กำไรสุทธิ (ประเมิน)</p>
@@ -521,7 +469,6 @@
                     </div>
                 </div>
 
-                <!-- ตารางรายละเอียดการขาย -->
                 <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                     <div class="px-6 py-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
                         <h4 class="font-bold text-gray-700">รายละเอียดสินค้าที่ขายได้ (เรียงตามยอดเงิน)</h4>
@@ -543,7 +490,7 @@
                                         <td class="px-5 py-3 border-b border-gray-100 text-sm">
                                             <div class="flex items-center">
                                                 <div class="flex-shrink-0 w-10 h-10 shadow-sm rounded border border-gray-200 overflow-hidden">
-                                                    <img class="w-full h-full object-cover" src="${sale.item.image}" alt="" />
+                                                    <img class="w-full h-full object-cover" src="${sale.item.image || 'https://via.placeholder.com/50?text=No+Img'}" onerror="this.src='https://via.placeholder.com/50?text=No+Img'" alt="" />
                                                 </div>
                                                 <div class="ml-3">
                                                     <p class="text-gray-900 font-medium">${sale.item.name}</p>
@@ -580,8 +527,8 @@
                         <div class="inline-block p-4 rounded-full bg-blue-50 text-blue-500 mb-4">
                             <i class="fas fa-receipt text-4xl"></i>
                         </div>
-                        <h3 class="text-2xl font-bold text-gray-800">อัพโหลดใบเสร็จเพื่อตัดสต๊อกอัตโนมัติ</h3>
-                        <p class="text-gray-500 text-sm mt-2">ให้ AI ช่วยอ่านรูปภาพสลิป/ใบเสร็จจากเครื่อง POS และสรุปยอดให้พนักงานรีเช็คก่อนตัดสต๊อกจริง</p>
+                        <h3 class="text-2xl font-bold text-gray-800">อัพโหลดใบเสร็จเพื่อตัดสต๊อกลงชีทอัตโนมัติ</h3>
+                        <p class="text-gray-500 text-sm mt-2">วิเคราะห์รูปภาพบิล หรือ พิมพ์ข้อมูลเอง ระบบจะตัดสต๊อกใน Google Sheet ให้ทันที</p>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -606,7 +553,7 @@
                             <label class="block text-gray-700 font-semibold mb-2">หรือกรอกข้อมูลเอง (Manual)</label>
                             <textarea id="pos-data-input" rows="6" class="flex-1 w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm bg-gray-50" placeholder="รูปแบบ:\nชื่อสินค้า, จำนวน\nหรือ\nรหัส ID, จำนวน\n\nตัวอย่าง:\nC2-006, 1\nถุงเท้า, 2"></textarea>
                             <button onclick="processManualPOSData()" class="mt-4 bg-gray-800 hover:bg-black text-white font-bold py-3 px-4 rounded-xl shadow-md transition flex items-center justify-center">
-                                <i class="fas fa-keyboard mr-2"></i> วิเคราะห์จากข้อความด้านบน
+                                <i class="fas fa-keyboard mr-2"></i> วิเคราะห์จากข้อความ
                             </button>
                         </div>
                     </div>
@@ -615,8 +562,7 @@
             container.innerHTML = html;
         }
 
-        // --- 4. MODALS & ACTIONS LOGIC ---
-
+        // --- MODALS & ACTIONS LOGIC ---
         function closeModal(modalId) {
             document.getElementById(modalId).classList.add('opacity-0', 'pointer-events-none');
             document.body.classList.remove('modal-active');
@@ -634,94 +580,39 @@
             }
         }
 
-        function saveStockEdit() {
+        // เซฟการแก้ไขสต๊อกกลับไปที่ Google Sheet (POST)
+        async function saveStockEdit() {
             const id = document.getElementById('edit-item-id').value;
             const newStock = parseInt(document.getElementById('edit-item-stock').value);
             
-            if(!isNaN(newStock) && newStock >= 0) {
-                const itemIndex = inventory.findIndex(i => i.id === id);
-                if(itemIndex > -1) {
-                    inventory[itemIndex].stock = newStock;
-                    closeModal('editModal');
-                    if(currentActivePage === inventory[itemIndex].cat) {
-                        changePage(currentActivePage); 
-                    }
-                }
-            } else {
+            if(isNaN(newStock) || newStock < 0) {
                 alert('กรุณาใส่ตัวเลขจำนวนเต็มที่ถูกต้อง (0 ขึ้นไป)');
-            }
-        }
-
-        function openAddModal(defaultCatId) {
-            document.getElementById('add-item-name').value = '';
-            document.getElementById('add-item-stock').value = '0';
-            document.getElementById('add-item-cost').value = '0';
-            document.getElementById('add-item-price').value = '0';
-            document.getElementById('add-item-image').value = '';
-
-            const selectCat = document.getElementById('add-item-cat');
-            selectCat.innerHTML = '';
-            for (const [key, value] of Object.entries(categories)) {
-                let selected = (key === defaultCatId) ? 'selected' : '';
-                selectCat.innerHTML += `<option value="${key}" ${selected}>${value}</option>`;
+                return;
             }
 
-            document.getElementById('addProductModal').classList.remove('opacity-0', 'pointer-events-none');
-            document.body.classList.add('modal-active');
-        }
+            closeModal('editModal');
+            showToast('<i class="fas fa-spinner fa-spin mr-2 text-xl"></i> กำลังบันทึกสต๊อกใหม่ลง Google Sheet...', 'bg-blue-600');
 
-        function saveNewProduct() {
-            const name = document.getElementById('add-item-name').value.trim();
-            const cat = document.getElementById('add-item-cat').value;
-            const stock = parseInt(document.getElementById('add-item-stock').value);
-            const cost = parseFloat(document.getElementById('add-item-cost').value);
-            const price = parseFloat(document.getElementById('add-item-price').value);
-            let image = document.getElementById('add-item-image').value.trim();
-
-            if(!name) { alert('กรุณาระบุชื่อสินค้า'); return; }
-            if(isNaN(stock) || stock < 0) { alert('สต๊อกต้องเป็นตัวเลข 0 ขึ้นไป'); return; }
-            if(isNaN(price) || price < 0) { alert('กรุณาระบุราคาขายที่ถูกต้อง'); return; }
-
-            if(!image) {
-                const randomColor = Math.floor(Math.random()*16777215).toString(16);
-                image = `https://via.placeholder.com/50/${randomColor}/ffffff?text=New`;
-            }
-
-            const newId = 'M-' + Date.now().toString().slice(-6);
-            const newItem = {
-                id: newId, cat: cat, name: name, cost: isNaN(cost) ? 0 : cost,
-                price: price, stock: stock, image: image
-            };
-
-            inventory.push(newItem);
-            closeModal('addProductModal');
-            changePage(cat);
-        }
-
-        function openEditCatModal(catId) {
-            document.getElementById('edit-cat-id-input').value = catId;
-            document.getElementById('edit-cat-name-input').value = categories[catId];
-            
-            document.getElementById('editCatModal').classList.remove('opacity-0', 'pointer-events-none');
-            document.body.classList.add('modal-active');
-        }
-
-        function saveCategoryName() {
-            const catId = document.getElementById('edit-cat-id-input').value;
-            const newName = document.getElementById('edit-cat-name-input').value.trim();
-
-            if(newName) {
-                categories[catId] = newName; 
-                updateSidebarCatNames();     
-                closeModal('editCatModal');
-                changePage(catId);           
-            } else {
-                alert('กรุณาระบุชื่อหมวดหมู่');
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: 'updateStockManual', id: id, newStock: newStock })
+                });
+                const result = await response.json();
+                
+                if(result.success) {
+                    await fetchInventoryData(); // รีโหลดข้อมูลล่าสุดมาใหม่
+                    showToast('<i class="fas fa-check-circle mr-2 text-xl"></i> แก้ไขสต๊อกสำเร็จ!', 'bg-green-600');
+                } else {
+                    throw new Error("Update failed");
+                }
+            } catch(e) {
+                showToast('<i class="fas fa-times-circle mr-2 text-xl"></i> เกิดข้อผิดพลาดในการบันทึก!', 'bg-red-600');
             }
         }
 
         // --- ระบบ POS ตัดสต๊อก ---
-        
         async function handleImageUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -827,7 +718,7 @@
         function matchAndShowPOS(extractedItems) {
             pendingPOSData = [];
             let errorItems = [];
-            let currentBillTotal = 0; // ยอดรวมบิลปัจจุบัน
+            let currentBillTotal = 0; 
 
             extractedItems.forEach(data => {
                 let searchName = data.name.toLowerCase();
@@ -847,7 +738,7 @@
                     pendingPOSData.push({
                         item: matchedItem, deductQty: qty, originalName: data.name 
                     });
-                    currentBillTotal += (matchedItem.price * qty); // คำนวณยอดเงินรวม
+                    currentBillTotal += (matchedItem.price * qty); 
                 } else {
                     errorItems.push(`${data.name} (x${qty})`);
                 }
@@ -860,7 +751,7 @@
             revenueDisplay.innerText = `฿${currentBillTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
 
             if(pendingPOSData.length === 0) {
-                summaryContainer.innerHTML = '<div class="text-center py-6 text-red-500"><p>ไม่พบรายการสินค้าที่ตรงกับระบบเลย</p></div>';
+                summaryContainer.innerHTML = '<div class="text-center py-6 text-red-500"><p>ไม่พบรายการสินค้าที่ตรงกับระบบชีทเลย</p></div>';
                 errorContainer.classList.add('hidden');
                 document.getElementById('posModal').classList.remove('opacity-0', 'pointer-events-none');
                 return;
@@ -877,7 +768,7 @@
                     <tr class="border-b border-gray-100 last:border-0 hover:bg-white">
                         <td class="py-3 px-3">
                             <p class="truncate w-40 md:w-auto font-bold text-blue-700" title="${data.item.name}">${data.item.name}</p>
-                            <p class="text-xs text-gray-500 mt-0.5">จากใบเสร็จ: ${data.originalName}</p>
+                            <p class="text-xs text-gray-500 mt-0.5">ID: ${data.item.id}</p>
                         </td>
                         <td class="py-3 px-2 text-center text-gray-500">${data.item.stock}</td>
                         <td class="py-3 px-2 text-center text-red-500 font-bold text-lg">-${data.deductQty}</td>
@@ -901,47 +792,49 @@
             document.body.classList.add('modal-active');
         }
 
-        function confirmPOSDeduction() {
+        // ตัดสต๊อกและส่งข้อมูลกลับไปบันทึกที่ Google Sheet
+        async function confirmPOSDeduction() {
             if(pendingPOSData.length === 0) return;
 
-            pendingPOSData.forEach(data => {
-                // อัพเดทสต๊อก
-                const itemIndex = inventory.findIndex(i => i.id === data.item.id);
-                if(itemIndex > -1) {
-                    let newStock = inventory[itemIndex].stock - data.deductQty;
-                    inventory[itemIndex].stock = newStock < 0 ? 0 : newStock;
-                    
-                    // อัพเดทยอดขายลงในระบบบันทึก
-                    let wsIndex = salesData.findIndex(ws => ws.id === data.item.id);
-                    if(wsIndex > -1) {
-                        salesData[wsIndex].qty += data.deductQty;
-                    } else {
-                        salesData.push({id: data.item.id, qty: data.deductQty});
-                    }
-                }
-            });
+            // เตรียมข้อมูลส่งไปที่ Sheet
+            let updates = pendingPOSData.map(data => ({
+                id: data.item.id,
+                deductQty: data.deductQty
+            }));
 
             closeModal('posModal');
             document.getElementById('pos-data-input').value = ''; 
             
-            // นำไปหน้าสรุปยอดขายทันทีหลังตัดสต๊อกเสร็จ
-            changePage('sales');
-            
-            const toast = document.createElement('div');
-            toast.className = 'fixed bottom-5 right-5 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-500 flex items-center z-50';
-            toast.innerHTML = '<i class="fas fa-check-circle mr-2 text-xl"></i> ตัดสต๊อกและบันทึกยอดขายเรียบร้อย!';
-            document.body.appendChild(toast);
-            
-            setTimeout(() => {
-                toast.classList.add('opacity-0', 'translate-y-10');
-                setTimeout(() => toast.remove(), 500);
-            }, 3000);
+            showToast('<i class="fas fa-spinner fa-spin mr-2 text-xl"></i> กำลังบันทึกยอดขายและตัดสต๊อกลง Google Sheet...', 'bg-blue-600');
+
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: 'cutStock', data: updates })
+                });
+                
+                const result = await response.json();
+                
+                if(result.success) {
+                    // โหลดข้อมูลใหม่จากชีท แล้วไปหน้าสรุปยอดขาย
+                    await fetchInventoryData();
+                    changePage('sales');
+                    showToast('<i class="fas fa-check-circle mr-2 text-xl"></i> บันทึกยอดขายและอัพเดทสต๊อกใน Sheet สำเร็จ!', 'bg-green-600');
+                } else {
+                    throw new Error("Update Failed");
+                }
+            } catch(e) {
+                console.error(e);
+                showToast('<i class="fas fa-times-circle mr-2 text-xl"></i> เกิดข้อผิดพลาดในการบันทึก!', 'bg-red-600');
+            }
         }
 
         // --- INITIALIZATION ---
         window.onload = () => {
             updateSidebarCatNames();
             changePage('dashboard');
+            fetchInventoryData(); // ดึงข้อมูลทันทีเมื่อเปิดหน้าเว็บ
         };
 
     </script>
