@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ระบบจัดการสต๊อก สาวน่านสปอร์ต</title>
-    <!-- ใช้ Tailwind CSS สำหรับความสวยงาม -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- ใช้ FontAwesome สำหรับไอคอน -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body { font-family: 'Sarabun', sans-serif; }
@@ -100,7 +98,7 @@
         </div>
     </div>
 
-    <!-- 4. POS Confirmation Modal -->
+    <!-- 2. POS Confirmation Modal -->
     <div id="posModal" class="modal opacity-0 pointer-events-none fixed w-full h-full top-0 left-0 flex items-center justify-center z-50">
         <div class="modal-overlay absolute w-full h-full bg-gray-900 opacity-50" onclick="closeModal('posModal')"></div>
         <div class="modal-container bg-white w-11/12 md:max-w-3xl mx-auto rounded-lg shadow-xl z-50 overflow-y-auto transform transition-all">
@@ -131,7 +129,7 @@
 
     <script>
         // ==========================================
-        // 🔴 นำ URL ของ Web App มาวางที่นี่
+        // 🔴 ลิงก์ Google Sheet API (ล่าสุดที่คุณให้มา)
         // ==========================================
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz07TCfHuUuyJBgariociqk45iCQ7w4CIiQlsw-kOT33nH1troIKfpKaCPxZSeLvMP_BQ/exec"; 
         
@@ -142,7 +140,6 @@
             'cat3': 'สินค้า Partner'
         };
 
-        // จะถูกโหลดมาจาก Google Sheet
         let inventory = [];
         let salesData = [];
         let pendingPOSData = [];
@@ -175,10 +172,7 @@
                 inventory = data.inventory || [];
                 salesData = data.salesData || [];
                 
-                // โหลดเสร็จแล้ว ให้แสดงหน้าปัจจุบันใหม่
                 changePage(currentActivePage);
-                
-                // โชว์แจ้งเตือน
                 showToast('<i class="fas fa-check-circle mr-2"></i> ซิงค์ข้อมูลล่าสุดสำเร็จ', 'bg-green-600');
             } catch (error) {
                 console.error("Error fetching data:", error);
@@ -255,7 +249,7 @@
 
         // --- RENDER FUNCTIONS ---
         function renderDashboard(container) {
-            if (inventory.length === 0) return; // Wait for data to load
+            if (inventory.length === 0) return; 
             
             const lowStockItems = inventory.filter(item => item.stock < 3);
             
@@ -602,7 +596,7 @@
                 const result = await response.json();
                 
                 if(result.success) {
-                    await fetchInventoryData(); // รีโหลดข้อมูลล่าสุดมาใหม่
+                    await fetchInventoryData(); 
                     showToast('<i class="fas fa-check-circle mr-2 text-xl"></i> แก้ไขสต๊อกสำเร็จ!', 'bg-green-600');
                 } else {
                     throw new Error("Update failed");
@@ -817,7 +811,6 @@
                 const result = await response.json();
                 
                 if(result.success) {
-                    // โหลดข้อมูลใหม่จากชีท แล้วไปหน้าสรุปยอดขาย
                     await fetchInventoryData();
                     changePage('sales');
                     showToast('<i class="fas fa-check-circle mr-2 text-xl"></i> บันทึกยอดขายและอัพเดทสต๊อกใน Sheet สำเร็จ!', 'bg-green-600');
