@@ -191,16 +191,13 @@
     <script>
         // --- 1. DATA STRUCTURES ---
 
-        // Object เก็บชื่อหมวดหมู่ (เพื่อให้แก้ไขได้)
         let categories = {
             'cat1': 'โภชนาการ (Amino, Mileage)',
             'cat2': 'เสื้อผ้าปั่นจักรยาน',
             'cat3': 'สินค้า Partner / Decathlon'
         };
 
-        // ข้อมูลสินค้าจำลอง
         let inventory = [
-            // หมวดที่ 1
             { id: '1-1', cat: 'cat1', name: 'Amino Vital Blue pouch 100 g', cost: 52.5, price: 75, stock: 0, image: 'https://via.placeholder.com/50/3B82F6/ffffff?text=Blue' },
             { id: '1-2', cat: 'cat1', name: 'Amino Vital Fit 90 g', cost: 31.5, price: 45, stock: 30, image: 'https://via.placeholder.com/50/EF4444/ffffff?text=Fit' },
             { id: '1-3', cat: 'cat1', name: 'Amino Vital Red shot (รสแอปเปิ้ล) 45 g', cost: 42, price: 60, stock: 114, image: 'https://via.placeholder.com/50/EF4444/ffffff?text=Apple' },
@@ -208,7 +205,6 @@
             { id: '1-5', cat: 'cat1', name: 'Mileage 25 Boost Hydrogel', cost: 88.78, price: 95, stock: 108, image: 'https://via.placeholder.com/50/1F2937/ffffff?text=Mileage' },
             { id: '1-6', cat: 'cat1', name: '40 Endure Drink Mix Citrus', cost: 88.78, price: 95, stock: 20, image: 'https://via.placeholder.com/50/F59E0B/ffffff?text=Endure' },
             { id: '1-7', cat: 'cat1', name: '250 Salt+ Electrolyte Capsule', cost: 233.64, price: 250, stock: 2, image: 'https://via.placeholder.com/50/8B5CF6/ffffff?text=Salt' },
-            // หมวดที่ 2
             { id: '2-1', cat: 'cat2', name: 'กางเกง Deez สีเทา XS', cost: 1350, price: 1850, stock: 1, image: 'https://via.placeholder.com/50/9CA3AF/ffffff?text=Pants' },
             { id: '2-2', cat: 'cat2', name: 'กางเกง Deez สีครีม S', cost: 1350, price: 1850, stock: 1, image: 'https://via.placeholder.com/50/FDE68A/000000?text=Pants' },
             { id: '2-3', cat: 'cat2', name: 'กางเกง Deez สีกรม S', cost: 1350, price: 1850, stock: 0, image: 'https://via.placeholder.com/50/1E3A8A/ffffff?text=Pants' },
@@ -217,7 +213,6 @@
             { id: '2-6', cat: 'cat2', name: 'กางเกงปั่นจักรยาน', cost: 150, price: 340, stock: 10, image: 'https://via.placeholder.com/50/9CA3AF/ffffff?text=Pants' },
             { id: '2-7', cat: 'cat2', name: 'ถุงเท้า', cost: 40, price: 90, stock: 25, image: 'https://via.placeholder.com/50/FDE68A/000000?text=Socks' },
             { id: '2-8', cat: 'cat2', name: 'หมวก', cost: 80, price: 170, stock: 12, image: 'https://via.placeholder.com/50/1E3A8A/ffffff?text=Hat' },
-            // หมวดที่ 3
             { id: '3-1', cat: 'cat3', name: 'MH500 BLACK C3', cost: 200, price: 300, stock: 10, image: 'https://via.placeholder.com/50/000000/ffffff?text=Glasses' },
             { id: '3-2', cat: 'cat3', name: '1PG 100 LILA SKIRT (4323890)', cost: 250, price: 350, stock: 8, image: 'https://via.placeholder.com/50/8B5CF6/ffffff?text=Skirt' },
             { id: '3-3', cat: 'cat3', name: '1PG 100 LILA SKIRT (4323888)', cost: 250, price: 350, stock: 2, image: 'https://via.placeholder.com/50/8B5CF6/ffffff?text=Skirt' },
@@ -244,11 +239,10 @@
         function changePage(page) {
             currentActivePage = page;
             
-            // Update Active Nav Style
             document.querySelectorAll('.nav-item').forEach(el => {
                 el.classList.remove('bg-blue-600', 'text-white');
                 if(!el.classList.contains('text-green-400')) el.classList.remove('text-green-400');
-                if(!el.id.includes('pos')) el.classList.add('hover:bg-gray-700'); // reset hover
+                if(!el.id.includes('pos')) el.classList.add('hover:bg-gray-700'); 
             });
             
             let navId = `nav-${page}`;
@@ -283,7 +277,6 @@
             const lowStockItems = inventory.filter(item => item.stock < 3);
             
             let html = `
-                <!-- สรุปแจ้งเตือน -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                     <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-red-500 flex items-center">
                         <div class="p-4 rounded-full bg-red-50 text-red-500 mr-4">
@@ -381,7 +374,6 @@
             let items = inventory.filter(i => i.cat === categoryId);
             
             let html = `
-                <!-- Toolbar หมวดหมู่ -->
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
                     <div>
                         <h3 class="text-xl font-bold text-gray-800">${categories[categoryId]}</h3>
@@ -394,7 +386,6 @@
                     </button>
                 </div>
 
-                <!-- ตารางสินค้า -->
                 <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                     <table class="min-w-full leading-normal">
                         <thead>
@@ -462,7 +453,6 @@
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <!-- ส่วนอัพโหลดรูปภาพ (AI OCR) -->
                         <div class="border-2 border-dashed border-blue-300 bg-blue-50/30 rounded-xl p-6 text-center hover:bg-blue-50 transition relative flex flex-col items-center justify-center min-h-[250px]">
                             <input type="file" id="receipt-image-upload" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onchange="handleImageUpload(event)">
                             
@@ -472,7 +462,6 @@
                                 <p class="text-sm text-gray-500 mt-1">AI จะทำการดึงข้อมูลสินค้าและจำนวน</p>
                             </div>
                             
-                            <!-- ตัวอย่างรูป / Loading State -->
                             <div id="image-preview-container" class="hidden w-full flex flex-col items-center z-20">
                                 <img id="receipt-preview" class="max-h-40 mx-auto rounded shadow-md border border-gray-200">
                                 <div id="ai-loading" class="hidden mt-4 text-blue-600 font-bold flex items-center justify-center bg-white px-4 py-2 rounded-full shadow-sm border border-blue-100">
@@ -481,7 +470,6 @@
                             </div>
                         </div>
 
-                        <!-- ส่วนกรอกข้อมูลแมนนวล (Fallback) -->
                         <div class="flex flex-col">
                             <label class="block text-gray-700 font-semibold mb-2">หรือกรอกข้อมูลเอง (Manual)</label>
                             <textarea id="pos-data-input" rows="6" class="flex-1 w-full p-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm bg-gray-50" placeholder="รูปแบบ:\nชื่อสินค้า, จำนวน\n\nตัวอย่าง:\nกางเกงปั่นจักรยาน, 1\nถุงเท้า, 2"></textarea>
@@ -502,7 +490,6 @@
             document.body.classList.remove('modal-active');
         }
 
-        // --- แก้ไขสต๊อก (Manual) ---
         function openEditModal(itemId) {
             const item = inventory.find(i => i.id === itemId);
             if(item) {
@@ -525,7 +512,7 @@
                     inventory[itemIndex].stock = newStock;
                     closeModal('editModal');
                     if(currentActivePage === inventory[itemIndex].cat) {
-                        changePage(currentActivePage); // Reload current page
+                        changePage(currentActivePage); 
                     }
                 }
             } else {
@@ -533,16 +520,13 @@
             }
         }
 
-        // --- เพิ่มสินค้าใหม่ ---
         function openAddModal(defaultCatId) {
-            // เคลียร์ฟอร์ม
             document.getElementById('add-item-name').value = '';
             document.getElementById('add-item-stock').value = '0';
             document.getElementById('add-item-cost').value = '0';
             document.getElementById('add-item-price').value = '0';
             document.getElementById('add-item-image').value = '';
 
-            // สร้าง Options สำหรับ Dropdown หมวดหมู่
             const selectCat = document.getElementById('add-item-cat');
             selectCat.innerHTML = '';
             for (const [key, value] of Object.entries(categories)) {
@@ -562,39 +546,26 @@
             const price = parseFloat(document.getElementById('add-item-price').value);
             let image = document.getElementById('add-item-image').value.trim();
 
-            // Validation พื้นฐาน
             if(!name) { alert('กรุณาระบุชื่อสินค้า'); return; }
             if(isNaN(stock) || stock < 0) { alert('สต๊อกต้องเป็นตัวเลข 0 ขึ้นไป'); return; }
             if(isNaN(price) || price < 0) { alert('กรุณาระบุราคาขายที่ถูกต้อง'); return; }
 
-            // กำหนดรูป Default ถ้าไม่ใส่ลิงก์
             if(!image) {
-                // สร้างรูป placeholder แบบสุ่มสี
                 const randomColor = Math.floor(Math.random()*16777215).toString(16);
                 image = `https://via.placeholder.com/50/${randomColor}/ffffff?text=New`;
             }
 
-            // สร้าง ID ใหม่ (ใช้ timestamp ให้ไม่ซ้ำ)
             const newId = 'new-' + Date.now().toString().slice(-6);
-
             const newItem = {
-                id: newId,
-                cat: cat,
-                name: name,
-                cost: isNaN(cost) ? 0 : cost,
-                price: price,
-                stock: stock,
-                image: image
+                id: newId, cat: cat, name: name, cost: isNaN(cost) ? 0 : cost,
+                price: price, stock: stock, image: image
             };
 
             inventory.push(newItem);
             closeModal('addProductModal');
-            
-            // นำผู้ใช้ไปยังหน้าหมวดหมู่ของสินค้าที่เพิ่งเพิ่ม
             changePage(cat);
         }
 
-        // --- แก้ไขชื่อหมวดหมู่ ---
         function openEditCatModal(catId) {
             document.getElementById('edit-cat-id-input').value = catId;
             document.getElementById('edit-cat-name-input').value = categories[catId];
@@ -608,18 +579,17 @@
             const newName = document.getElementById('edit-cat-name-input').value.trim();
 
             if(newName) {
-                categories[catId] = newName; // อัพเดทใน Object
-                updateSidebarCatNames();     // อัพเดทเมนูด้านซ้าย
+                categories[catId] = newName; 
+                updateSidebarCatNames();     
                 closeModal('editCatModal');
-                changePage(catId);           // รีเฟรชหน้าปัจจุบันเพื่อแสดงชื่อใหม่
+                changePage(catId);           
             } else {
                 alert('กรุณาระบุชื่อหมวดหมู่');
             }
         }
 
-        // --- ระบบ POS ตัดสต๊อก (ด้วยรูปภาพ AI & Manual) ---
+        // --- ระบบ POS ตัดสต๊อก ---
         
-        // 1. ฟังก์ชันจัดการเมื่อผู้ใช้อัพโหลดรูปภาพ
         async function handleImageUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -629,7 +599,6 @@
             const previewImg = document.getElementById('receipt-preview');
             const loadingIndicator = document.getElementById('ai-loading');
 
-            // อ่านไฟล์รูปภาพเพื่อแสดงผลและดึง Base64
             const reader = new FileReader();
             reader.onload = async (e) => {
                 uploadPrompt.classList.add('hidden');
@@ -641,8 +610,199 @@
                 const mimeType = file.type;
 
                 try {
-                    // เรียกใช้งาน Gemini API 
-                    const apiKey = ""; // API Key จะถูกแนบโดยระบบ Canvas
+                    const apiKey = ""; 
                     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
                     
-                    const promptText = "วิเคราะห์ข้อมูลยอดขายจากรูปภาพใบเสร็จนี้ ให้ดึงเฉพาะ 'ชื่อสินค้า' (name) และ 'จำนวน' (qty) ที่ขายได้ออกมา (เช่น ในหมวดหมู่ ยอดขายตามหมวดหมู่ หรือ รายการอาหาร) ส่งกลับมาเป็นข้อมูลรูปแบบ JSON Array ของ Object เท่านั้น ห้ามตอบกลับเป็นข้อความอื่นและห้ามใช้รูปแบบ Markdown (ไม่ต้องมี
+                    // ปรับประโยคคำสั่งให้สั้นลง และไม่มีสัญลักษณ์พิเศษที่ทำให้ระบบเกิดข้อผิดพลาด
+                    const promptText = "วิเคราะห์ข้อมูลยอดขายจากรูปภาพใบเสร็จนี้ ให้ดึงเฉพาะ 'ชื่อสินค้า' (name) และ 'จำนวน' (qty) ที่ขายได้ออกมา ส่งกลับมาเป็น JSON Array ของ Object เท่านั้น ห้ามตอบกลับเป็นข้อความอื่นและห้ามใช้รูปแบบ Markdown ตัวอย่าง: [{\"name\": \"กางเกงปั่นจักรยาน\", \"qty\": 1}]";
+
+                    const payload = {
+                        contents: [{
+                            role: "user",
+                            parts: [
+                                { text: promptText },
+                                { inlineData: { mimeType: mimeType, data: base64String } }
+                            ]
+                        }],
+                        generationConfig: {
+                            responseMimeType: "application/json"
+                        }
+                    };
+
+                    let response;
+                    let retries = 5;
+                    let delay = 1000;
+                    for (let i = 0; i < retries; i++) {
+                        try {
+                            response = await fetch(url, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(payload)
+                            });
+                            if (response.ok) break;
+                            if (i === retries - 1) throw new Error(`HTTP Error: ${response.status}`);
+                        } catch (err) {
+                            if (i === retries - 1) throw err;
+                            await new Promise(res => setTimeout(res, delay));
+                            delay *= 2;
+                        }
+                    }
+
+                    const result = await response.json();
+                    const textResult = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                    
+                    if (textResult) {
+                        const extractedItems = JSON.parse(textResult);
+                        matchAndShowPOS(extractedItems);
+                    } else {
+                        throw new Error("AI อ่านไม่ได้");
+                    }
+                } catch (error) {
+                    console.error("AI Error:", error);
+                    alert("ไม่สามารถวิเคราะห์รูปภาพได้ในขณะนี้ กรุณากรอกข้อความแทนครับ");
+                    uploadPrompt.classList.remove('hidden');
+                    previewContainer.classList.add('hidden');
+                } finally {
+                    loadingIndicator.classList.add('hidden');
+                    document.getElementById('receipt-image-upload').value = ''; 
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function processManualPOSData() {
+            const rawData = document.getElementById('pos-data-input').value.trim();
+            if(!rawData) {
+                alert('กรุณากรอกข้อมูลยอดขายก่อน');
+                return;
+            }
+
+            const lines = rawData.split('\n');
+            let extractedItems = [];
+
+            lines.forEach(line => {
+                if(!line.trim()) return;
+                let parts = line.split(/[,	]/); 
+                if(parts.length >= 2) {
+                    let name = parts[0].trim();
+                    let qty = parseInt(parts[1].trim());
+                    if(!isNaN(qty)) extractedItems.push({ name: name, qty: qty });
+                }
+            });
+            
+            matchAndShowPOS(extractedItems);
+        }
+
+        function matchAndShowPOS(extractedItems) {
+            pendingPOSData = [];
+            let errorItems = [];
+
+            extractedItems.forEach(data => {
+                let searchName = data.name.toLowerCase();
+                let qty = data.qty;
+
+                let matchedItem = inventory.find(i => 
+                    i.name.toLowerCase() === searchName || i.id.toLowerCase() === searchName
+                );
+
+                if(!matchedItem) {
+                    matchedItem = inventory.find(i => 
+                        i.name.toLowerCase().includes(searchName) || searchName.includes(i.name.toLowerCase())
+                    );
+                }
+
+                if(matchedItem) {
+                    pendingPOSData.push({
+                        item: matchedItem, deductQty: qty, originalName: data.name 
+                    });
+                } else {
+                    errorItems.push(`${data.name} (x${qty})`);
+                }
+            });
+
+            const summaryContainer = document.getElementById('pos-summary-list');
+            const errorContainer = document.getElementById('pos-error-msg');
+            
+            if(pendingPOSData.length === 0) {
+                summaryContainer.innerHTML = '<div class="text-center py-6 text-red-500"><p>ไม่พบรายการสินค้าที่ตรงกับระบบเลย</p></div>';
+                errorContainer.classList.add('hidden');
+                document.getElementById('posModal').classList.remove('opacity-0', 'pointer-events-none');
+                return;
+            }
+
+            let summaryHtml = '<table class="w-full text-sm text-left"><thead class="border-b bg-gray-100"><tr><th class="py-2 px-3">สินค้า (ระบบสต๊อก)</th><th class="py-2 px-2 text-center">เดิม</th><th class="py-2 px-2 text-center text-red-600">หักออก</th><th class="py-2 px-2 text-center text-green-700">เหลือ</th></tr></thead><tbody>';
+            
+            pendingPOSData.forEach(data => {
+                let newStock = data.item.stock - data.deductQty;
+                let warningClass = newStock < 0 ? "text-red-600 font-bold bg-red-50" : "font-medium text-gray-800";
+                
+                summaryHtml += `
+                    <tr class="border-b border-gray-100 last:border-0 hover:bg-white">
+                        <td class="py-3 px-3">
+                            <p class="truncate w-48 md:w-auto font-bold text-blue-700" title="${data.item.name}">${data.item.name}</p>
+                            <p class="text-xs text-gray-500 mt-0.5">จากใบเสร็จ: ${data.originalName}</p>
+                        </td>
+                        <td class="py-3 px-2 text-center text-gray-500">${data.item.stock}</td>
+                        <td class="py-3 px-2 text-center text-red-500 font-bold text-lg">-${data.deductQty}</td>
+                        <td class="py-3 px-2 text-center ${warningClass} rounded text-lg">${newStock}</td>
+                    </tr>
+                `;
+            });
+            summaryHtml += '</tbody></table>';
+            
+            summaryContainer.innerHTML = summaryHtml;
+
+            if(errorItems.length > 0) {
+                errorContainer.innerHTML = `<b>ระบบข้ามรายการ (หาไม่พบ):</b><br> <span class="font-mono text-xs">${errorItems.join(', ')}</span>`;
+                errorContainer.classList.remove('hidden');
+            } else {
+                errorContainer.classList.add('hidden');
+            }
+
+            document.getElementById('posModal').classList.remove('opacity-0', 'pointer-events-none');
+            document.body.classList.add('modal-active');
+        }
+
+        function confirmPOSDeduction() {
+            if(pendingPOSData.length === 0) return;
+
+            pendingPOSData.forEach(data => {
+                const itemIndex = inventory.findIndex(i => i.id === data.item.id);
+                if(itemIndex > -1) {
+                    let newStock = inventory[itemIndex].stock - data.deductQty;
+                    inventory[itemIndex].stock = newStock < 0 ? 0 : newStock;
+                    
+                    let wsIndex = weeklySales.findIndex(ws => ws.id === data.item.id);
+                    if(wsIndex > -1) {
+                        weeklySales[wsIndex].qty += data.deductQty;
+                    } else {
+                        weeklySales.push({id: data.item.id, qty: data.deductQty});
+                    }
+                }
+            });
+
+            closeModal('posModal');
+            document.getElementById('pos-data-input').value = ''; 
+            
+            changePage('dashboard');
+            
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-5 right-5 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-500 flex items-center z-50';
+            toast.innerHTML = '<i class="fas fa-check-circle mr-2 text-xl"></i> ตัดสต๊อกสำเร็จแล้ว!';
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-10');
+                setTimeout(() => toast.remove(), 500);
+            }, 3000);
+        }
+
+        // --- INITIALIZATION ---
+        window.onload = () => {
+            updateSidebarCatNames();
+            changePage('dashboard');
+        };
+
+    </script>
+</body>
+</html>
